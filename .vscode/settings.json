@@ -1,0 +1,9 @@
+{
+    "cmake.configureOnOpen": false,
+    "files.associations": {
+        "*.ph": "cpp",
+        "*.inc": "cpp",
+        "atomic": "cpp",
+        "*.tcc": "cpp"
+    }
+}
