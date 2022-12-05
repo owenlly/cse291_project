@@ -897,6 +897,7 @@ IEW::dispatchInsts(ThreadID tid)
     {
         inst = insts_to_dispatch.front();
 
+        //owen++++
         inst->setNonSpeculative();
 
         if (dispatchStatus[tid] == Unblocking) {
