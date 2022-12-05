@@ -206,6 +206,9 @@ class StaticInst : public RefCounted, public StaticInstFlags
     void setDelayedCommit() { flags[IsDelayedCommit] = true; }
     void setFlag(Flags f) { flags[f] = true; }
 
+    //owen++++
+    void setNonSpeculative() { flags[IsNonSpeculative] = true; }
+
     /// Operation class.  Used to select appropriate function unit in issue.
     OpClass opClass() const { return _opClass; }
 

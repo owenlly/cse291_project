@@ -93,6 +93,7 @@ Decoder::decode(ExtMachInst mach_inst, Addr addr)
             si->getName(), mach_inst);
     
     //owen++++
+    /*
     uint64_t rs1, rs2, opcode;
     opcode = mach_inst & 0x7F;
     std::string beq = "beq";
@@ -123,6 +124,7 @@ Decoder::decode(ExtMachInst mach_inst, Addr addr)
             printf("This is a bltu x%ld, x%ld\n", rs1, rs2);
         }
     }
+    */
     //owen++++
     
     return si;

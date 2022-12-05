@@ -220,6 +220,7 @@ ROB::insertInst(const DynInstPtr &inst)
     tail--;
 
     inst->setInROB();
+    //std::cout<<"nonspeculative "<<inst->isNonSpeculative()<<std::endl;
 
     ++numInstsInROB;
     ++threadEntries[tid];
