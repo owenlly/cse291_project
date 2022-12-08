@@ -495,6 +495,13 @@ class InstructionQueue
         statistics::Scalar floatInstsIssued;
         /** Stat for number of branch instructions issued. */
         statistics::Scalar branchInstsIssued;
+        
+        //owen++++
+        statistics::Scalar condBranchInstsIssued;
+        statistics::Scalar condBranchSrcReady;
+        statistics::Formula srcReadyRate;
+
+
         /** Stat for number of memory instructions issued. */
         statistics::Scalar memInstsIssued;
         /** Stat for number of miscellaneous instructions issued. */

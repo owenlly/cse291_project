@@ -32,18 +32,5 @@ gem5/configs/example/memcheck.cfg
 gem5/configs/dram/lowp_sweep.cfg
 gem5/.pyenv
 
-ChampSim/inc/champsim_constants.h
-ChampSim/inc/cache_modules.inc
-ChampSim/inc/ooo_cpu_modules.inc
-ChampSim/src/core_inst.cc
-ChampSim/.champsimconfig_cache
-ChampSim/./Makefile
-
-ChampSim/bin/
-ChampSim/obj/
-
-ChampSim/**/*.o
-ChampSim/**/*.d
-
-ChampSim/tracer/pin/obj-intel64/
+log/*
 

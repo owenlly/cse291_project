@@ -1009,6 +1009,8 @@ Rename::renameSrcRegs(const DynInstPtr &inst, ThreadID tid)
     UnifiedRenameMap *map = renameMap[tid];
     unsigned num_src_regs = inst->numSrcRegs();
 
+    bool isBranch = false; //inst->isControl();
+    if (isBranch) std::cout<<"Renaming stage: Instruction "<<inst->getName()<<" has "<<num_src_regs<<" src regs. ";
     // Get the architectual register numbers from the source and
     // operands, and redirect them to the right physical register.
     for (int src_idx = 0; src_idx < num_src_regs; src_idx++) {
@@ -1051,6 +1053,7 @@ Rename::renameSrcRegs(const DynInstPtr &inst, ThreadID tid)
 
         // See if the register is ready or not.
         if (scoreboard->getReg(renamed_reg)) {
+            if (isBranch) std::cout<<"Src reg No."<<renamed_reg->index()<<" is ready. ";
             DPRINTF(Rename,
                     "[tid:%i] "
                     "Register %d (flat: %d) (%s) is ready.\n",
@@ -1059,15 +1062,16 @@ Rename::renameSrcRegs(const DynInstPtr &inst, ThreadID tid)
 
             inst->markSrcRegReady(src_idx);
         } else {
+            if (isBranch) std::cout<<"Src reg No."<<renamed_reg->index()<<" is not ready. ";
             DPRINTF(Rename,
                     "[tid:%i] "
                     "Register %d (flat: %d) (%s) is not ready.\n",
                     tid, renamed_reg->index(), renamed_reg->flatIndex(),
                     renamed_reg->className());
         }
-
         ++stats.lookups;
     }
+    if (isBranch) std::cout<<std::endl;
 }
 
 void

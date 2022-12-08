@@ -587,6 +587,11 @@ class DynInst : public ExecContext, public RefCounted
 
     //owen++++
     void setNonSpeculative() { staticInst->setNonSpeculative(); }
+    
+    /// Return name of machine instruction
+    std::string getName() { 
+        return staticInst->getName();
+    }
 
     uint64_t
     getHtmTransactionUid() const override
