@@ -109,6 +109,10 @@ class DependencyGraph
     /** Removes and returns the newest dependent of a specific register. */
     DynInstPtr pop(RegIndex idx);
 
+    //owen++++
+    DynInstPtr produceInst(RegIndex idx);
+    //
+
     /** Checks if the entire dependency graph is empty. */
     bool empty() const;
 
@@ -257,6 +261,19 @@ DependencyGraph<DynInstPtr>::pop(RegIndex idx)
     }
     return inst;
 }
+
+//owen++++
+template <class DynInstPtr>
+DynInstPtr
+DependencyGraph<DynInstPtr>::produceInst(RegIndex idx)
+{
+    DepEntry *node;
+    DynInstPtr inst = NULL;
+    node = &dependGraph[idx];
+    inst = node->inst;
+    return inst;
+}
+//
 
 template <class DynInstPtr>
 bool

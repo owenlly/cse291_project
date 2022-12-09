@@ -657,7 +657,7 @@ InstructionQueue::insertNonSpec(const DynInstPtr &new_inst)
     new_inst->setInIQ();
 
     //owen++++
-    if (NON_SPECULATIVE) {
+    if (NON_SPECULATIVE_MODE) {
         addToDependents(new_inst);
         dependGraph.reset();
     }
@@ -1372,8 +1372,10 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
     //owen++++
     bool isBranch = new_inst->isCondCtrl();
     int32_t ready_num = 0;
+    uint16_t src_reg_index[2] = {0};
     if (isBranch) {
-        std::cout<<"IQ stage: Instruction "<<new_inst->getName()<<" has "<<(int32_t)total_src_regs<<" src regs. ";
+        //std::cout<<"IQ stage: Instruction "<<new_inst->pcState()<<" "<<new_inst->getName()<<" has "<<(int32_t)total_src_regs<<" src regs. ";
+        std::cout<<"IQ stage, Instruction "<<new_inst->pcState()<<" "<<new_inst->getName()<<": ";
     }
     //
 
@@ -1385,7 +1387,8 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
 
         //owen++++
         if (isBranch) {
-            std::cout<<"Src reg No."<<src_reg_temp->index()<<" ";
+            src_reg_index[src_reg_idx] = src_reg_temp->flatIndex();
+            std::cout<<"Src reg No."<<src_reg_index[src_reg_idx]<<" ";
         }
         //
 
@@ -1414,7 +1417,11 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
                         src_reg->className());
 
                 dependGraph.insert(src_reg->flatIndex(), new_inst);
-
+                
+                //DynInstPtr inst_temp = NULL;
+                //inst_temp = dependGraph.produceInst(src_reg->flatIndex());
+                //if (inst_temp != NULL) std::cout<<"producer "<<inst_temp->getName()<<std::endl;
+                
                 // Change the return value to indicate that something
                 // was added to the dependency graph.
                 return_val = true;
@@ -1445,12 +1452,27 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
 
     //owen++++
     if (isBranch) {
-        std::cout<<ready_num<<" out of "<<(int32_t)total_src_regs<<" reg(s) is/are ready. ";
         if (ready_num == (int32_t)total_src_regs) {
-            std::cout<<"All src reg(s) is/are ready!"<<std::endl;
+            std::cout<<"All src reg(s) is/are ready! ";
             iqStats.condBranchSrcReady++;
         }
-        else std::cout<<std::endl;
+        else {
+            std::cout<<ready_num<<" out of "<<(int32_t)total_src_regs<<" reg(s) is/are ready. ";
+        }
+
+        DynInstPtr inst_temp = NULL;
+        for (int i = 0; i < total_src_regs; i++) {
+            //printf("i = %d, src_reg_index[i] = %d\n", i, src_reg_index[i]);
+            if (src_reg_index[i] == 65535) std::cout<<"Src "<<i<<" is constant 0. ";
+            else {
+                //if (!dependGraph.empty(src_reg_index[i])) 
+                inst_temp = dependGraph.produceInst(src_reg_index[i]);
+                if (inst_temp != NULL) 
+                    std::cout<<"Src "<<i<<" is from Instruction "<<inst_temp->pcState()<<" "<<inst_temp->getName()<<". ";
+                else std::cout<<"Src "<<i<<" is ready. ";
+            }
+        }
+        std::cout<<std::endl;
     }
     //
 

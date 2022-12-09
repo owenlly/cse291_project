@@ -52,8 +52,6 @@
 #include "cpu/o3/limits.hh"
 #include "sim/faults.hh"
 
-#define NON_SPECULATIVE 1
-
 namespace gem5
 {
 

@@ -55,6 +55,8 @@
 #include "debug/IEW.hh"
 #include "sim/probe/probe.hh"
 
+#define NON_SPECULATIVE_MODE 1
+
 namespace gem5
 {
 
