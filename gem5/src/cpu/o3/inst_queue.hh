@@ -403,6 +403,7 @@ class InstructionQueue
     void moveToYoungerInst(ListOrderIt age_order_it);
 
     DependencyGraph<DynInstPtr> dependGraph;
+    DependencyGraph<DynInstPtr> producerGraph;
 
     //////////////////////////////////////
     // Various parameters

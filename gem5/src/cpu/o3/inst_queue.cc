@@ -114,6 +114,9 @@ InstructionQueue::InstructionQueue(CPU *cpu_ptr, IEW *iew_ptr,
     //dependency graph.
     dependGraph.resize(numPhysRegs);
 
+    //owen++++
+    producerGraph.resize(numPhysRegs);
+
     // Resize the register scoreboard.
     regScoreboard.resize(numPhysRegs);
 
@@ -1374,8 +1377,7 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
     int32_t ready_num = 0;
     uint16_t src_reg_index[2] = {0};
     if (isBranch) {
-        //std::cout<<"IQ stage: Instruction "<<new_inst->pcState()<<" "<<new_inst->getName()<<" has "<<(int32_t)total_src_regs<<" src regs. ";
-        std::cout<<"IQ stage, Instruction "<<new_inst->pcState()<<" "<<new_inst->getName()<<": ";
+        std::cout<<new_inst->pcState()<<" "<<new_inst->getName()<<": ";
     }
     //
 
@@ -1452,12 +1454,10 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
 
     //owen++++
     if (isBranch) {
+        std::cout<<ready_num<<" out of "<<(int32_t)total_src_regs<<" reg(s) is/are ready. ";
         if (ready_num == (int32_t)total_src_regs) {
             std::cout<<"All src reg(s) is/are ready! ";
             iqStats.condBranchSrcReady++;
-        }
-        else {
-            std::cout<<ready_num<<" out of "<<(int32_t)total_src_regs<<" reg(s) is/are ready. ";
         }
 
         DynInstPtr inst_temp = NULL;
@@ -1466,7 +1466,7 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
             if (src_reg_index[i] == 65535) std::cout<<"Src "<<i<<" is constant 0. ";
             else {
                 //if (!dependGraph.empty(src_reg_index[i])) 
-                inst_temp = dependGraph.produceInst(src_reg_index[i]);
+                inst_temp = producerGraph.produceInst(src_reg_index[i]);
                 if (inst_temp != NULL) 
                     std::cout<<"Src "<<i<<" is from Instruction "<<inst_temp->pcState()<<" "<<inst_temp->getName()<<". ";
                 else std::cout<<"Src "<<i<<" is ready. ";
@@ -1510,6 +1510,9 @@ InstructionQueue::addToProducers(const DynInstPtr &new_inst)
         }
 
         dependGraph.setInst(dest_reg->flatIndex(), new_inst);
+        //owen++++
+        producerGraph.setInst(dest_reg->flatIndex(), new_inst);
+        //
 
         // Mark the scoreboard to say it's not yet ready.
         regScoreboard[dest_reg->flatIndex()] = false;
