@@ -22,4 +22,5 @@
 
 3. 查看结果 
    gem5/m5out/stats.txt可查看condBranchInstsIssued, condBranchSrcReady, srcReadyRate变量的统计结果，文件中有对变量含义的详细描述;
+   
    gem5/m5out/trace.txt可查看cpu运行时的trace.
