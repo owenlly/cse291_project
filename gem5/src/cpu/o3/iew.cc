@@ -898,7 +898,7 @@ IEW::dispatchInsts(ThreadID tid)
         inst = insts_to_dispatch.front();
 
         //owen++++
-        inst->setNonSpeculative();
+        if (NON_SPECULATIVE) inst->setNonSpeculative();
 
         if (dispatchStatus[tid] == Unblocking) {
             DPRINTF(IEW, "[tid:%i] Issue: Examining instruction from skid "

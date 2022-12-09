@@ -657,8 +657,10 @@ InstructionQueue::insertNonSpec(const DynInstPtr &new_inst)
     new_inst->setInIQ();
 
     //owen++++
-    addToDependents(new_inst);
-    dependGraph.reset();
+    if (NON_SPECULATIVE) {
+        addToDependents(new_inst);
+        dependGraph.reset();
+    }
     //
 
     // Have this instruction set itself as the producer of its destination
