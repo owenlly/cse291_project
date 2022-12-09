@@ -500,7 +500,7 @@ class InstructionQueue
         statistics::Scalar condBranchInstsIssued;
         statistics::Scalar condBranchSrcReady;
         statistics::Formula srcReadyRate;
-
+        //
 
         /** Stat for number of memory instructions issued. */
         statistics::Scalar memInstsIssued;

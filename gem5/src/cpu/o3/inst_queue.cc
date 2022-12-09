@@ -190,6 +190,7 @@ InstructionQueue::IQStats::IQStats(CPU *cpu, const unsigned &total_width)
              "Number of float instructions issued"),
     ADD_STAT(branchInstsIssued, statistics::units::Count::get(),
              "Number of branch instructions issued"),
+
     //owen++++
     ADD_STAT(condBranchInstsIssued, statistics::units::Count::get(),
              "Number of conditional branch instructions issued"),
@@ -198,6 +199,7 @@ InstructionQueue::IQStats::IQStats(CPU *cpu, const unsigned &total_width)
     ADD_STAT(srcReadyRate, statistics::units::Rate<
                 statistics::units::Count, statistics::units::Count>::get(),
              "condBranchSrcReady / condBranchInstsIssued", condBranchSrcReady / condBranchInstsIssued),
+    //
 
     ADD_STAT(memInstsIssued, statistics::units::Count::get(),
              "Number of memory instructions issued"),
@@ -245,6 +247,7 @@ InstructionQueue::IQStats::IQStats(CPU *cpu, const unsigned &total_width)
     branchInstsIssued
         .prereq(branchInstsIssued);
 
+    //owen++++
     condBranchInstsIssued
         .prereq(condBranchInstsIssued);
 
@@ -254,6 +257,7 @@ InstructionQueue::IQStats::IQStats(CPU *cpu, const unsigned &total_width)
     srcReadyRate
         .flags(statistics::total)
         ;
+    //
 
     memInstsIssued
         .prereq(memInstsIssued);
@@ -580,9 +584,6 @@ InstructionQueue::hasReadyInsts()
 void
 InstructionQueue::insert(const DynInstPtr &new_inst)
 {
-    //owen++++
-    //new_inst->setNonSpeculative();
-
     if (new_inst->isFloating()) {
         iqIOStats.fpInstQueueWrites++;
     } else if (new_inst->isVector()) {
@@ -658,6 +659,7 @@ InstructionQueue::insertNonSpec(const DynInstPtr &new_inst)
     //owen++++
     addToDependents(new_inst);
     dependGraph.reset();
+    //
 
     // Have this instruction set itself as the producer of its destination
     // register(s).
@@ -1364,21 +1366,27 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
     // them to the dependency list if they are not ready.
     int8_t total_src_regs = new_inst->numSrcRegs();
     bool return_val = false;
+    
+    //owen++++
     bool isBranch = new_inst->isCondCtrl();
-
     int32_t ready_num = 0;
     if (isBranch) {
         std::cout<<"IQ stage: Instruction "<<new_inst->getName()<<" has "<<(int32_t)total_src_regs<<" src regs. ";
     }
+    //
+
     for (int src_reg_idx = 0;
          src_reg_idx < total_src_regs;
          src_reg_idx++)
     {
         PhysRegIdPtr src_reg_temp = new_inst->renamedSrcIdx(src_reg_idx);
+
+        //owen++++
         if (isBranch) {
             std::cout<<"Src reg No."<<src_reg_temp->index()<<" ";
-            //printf("Src reg No.%i ", src_reg_temp->index());
         }
+        //
+
         // Only add it to the dependency graph if it's not ready.
         if (!new_inst->readySrcIdx(src_reg_idx)) {
             PhysRegIdPtr src_reg = new_inst->renamedSrcIdx(src_reg_idx);
@@ -1388,10 +1396,16 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
             // between stages.  Only if it really isn't ready should
             // it be added to the dependency graph.
             if (src_reg->isFixedMapping()) {
+                //owen++++
                 if (isBranch) std::cout<<"has fixed mapping. ";
+                //
+
                 continue;
             } else if (!regScoreboard[src_reg->flatIndex()]) {
+                //owen++++
                 if (isBranch) std::cout<<"is added to the dependency chain. ";
+                //
+
                 DPRINTF(IQ, "Instruction PC %s has src reg %i (%s) that "
                         "is being added to the dependency chain.\n",
                         new_inst->pcState(), src_reg->index(),
@@ -1403,10 +1417,13 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
                 // was added to the dependency graph.
                 return_val = true;
             } else {
+                //owen++++
                 if (isBranch) {
                     std::cout<<"is ready before reaching IQ. ";
                     ready_num++;
                 }
+                //
+
                 DPRINTF(IQ, "Instruction PC %s has src reg %i (%s) that "
                         "became ready before it reached the IQ.\n",
                         new_inst->pcState(), src_reg->index(),
@@ -1415,13 +1432,16 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
                 new_inst->markSrcRegReady(src_reg_idx);
             }
         }
-        else {
+        else { //owen++++
             if (isBranch) {
                 std::cout<<"is ready. ";
                 ready_num++;
             }
+            //
         }
     }
+
+    //owen++++
     if (isBranch) {
         std::cout<<ready_num<<" out of "<<(int32_t)total_src_regs<<" reg(s) is/are ready. ";
         if (ready_num == (int32_t)total_src_regs) {
@@ -1430,6 +1450,7 @@ InstructionQueue::addToDependents(const DynInstPtr &new_inst)
         }
         else std::cout<<std::endl;
     }
+    //
 
     return return_val;
 }
